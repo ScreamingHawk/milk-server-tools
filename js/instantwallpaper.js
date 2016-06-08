@@ -17,42 +17,33 @@ function grabImage(){
 		imgOrg = $('#imageImage');
 		imgOrg.attr('crossOrigin', 'anonymous');
 		imgOrg.attr("src", imgSrc);
-		$('#imageOriginalText').removeClass('hidden');
-		$('#imageDownload').removeClass('hidden');
+		// Unhide sections
+		$('#canvasBlock').removeClass('hidden');
+		$('#downloadBlock').removeClass('hidden');
 		imgOrg.load(function(){
 			img = imgOrg.get(0);
 			updateCanvas();
 		});
 		imgOrg.error(function(){
-			// Cross Origin Error
+			// Cross Origin Error, hide download
 			imgOrg.removeAttr('crossOrigin', '');
 			imgOrg.attr("src", imgSrc);
-			$('#imageDownload').addClass('hidden');
+			$('#downloadBlock').addClass('hidden');
 		});
 	} else {
 		//TODO File upload here
 	}
 }
-var iw, ih, cw, ch
+var iw, ih, cw, ch, xw, xh;
 
 function updateCanvas(){
 	var can = $('#imageCanvas');
-	can.removeClass('hidden');
 	var ctx = can[0].getContext('2d');
 	
 	iw = img.clientWidth;
 	ih = img.clientHeight;
-	var xw = $('#imageWidth').val();
-	var xh = $('#imageHeight').val();
-	
-	// Set width on wide image, height on tall
-	if (xw > xh){
-		can.css('width', xw);
-		can.css('height', '');
-	} else {
-		can.css('width', '');
-		can.css('height', xh);
-	}
+	xw = $('#imageWidth').val();
+	xh = $('#imageHeight').val();
 	
 	ctx.canvas.width = xw;
 	ctx.canvas.height = xh;
@@ -132,8 +123,15 @@ $(document).ready(function(){
 		grabImage();
 		return false;
 	});
-	$('#imageDownload').click(function(){
+	$('#imageDownloadOpen').click(function(){
 		window.open($('#imageCanvas').get(0).toDataURL("image/png"));
+		return false;
+	});
+	$('#imageDownloadImage').click(function(){
+		// Create the image at the bottom of the page
+		$('#imageGenerated').attr('src', $('#imageCanvas').get(0).toDataURL("image/png"));
+		$('#downloadImageBlock').removeClass('hidden');
+		return false;
 	});
 	$('#showHelp').click(function(){
 		var ihelp = $('#imageHelp');
